@@ -1,24 +1,24 @@
-import { Product } from '@/types/product';
+import { Product } from '@/types';
+import { v4 as uuid } from 'uuid';
 
-export const mockProducts: Product[] = [
-  {
-    id: '1',
-    name: 'Notebook Gamer',
-    category: 'Eletrônicos',
-    price: 4500,
-    description: 'Um notebook potente para jogos.',
-    imageUrl: 'https://via.placeholder.com/150',
-  },
-  {
-    id: '2',
-    name: 'Fone Bluetooth',
-    category: 'Acessórios',
-    price: 199,
-    description: 'Fone de ouvido com cancelamento de ruído.',
-    imageUrl: 'https://via.placeholder.com/150',
-  },
-];
+let localProducts: Product[] = [];
 
-export const fetchMockProducts = async (): Promise<Product[]> => {
-  return new Promise((resolve) => resolve(mockProducts));
-};
+export async function getProducts(): Promise<Product[]> {
+  const res = await fetch('https://mocki.io/v1/d72e2ce2-2b01-40e3-8b13-33a33a38f34f');
+  const { products } = await res.json();
+
+  return [...products, ...localProducts];
+}
+
+export async function createProduct(product: Omit<Product, 'id'>): Promise<Product> {
+  const newProduct: Product = {
+    ...product,
+    id: uuid(),
+  };
+
+  // Simula delay e adiciona no array local
+  await new Promise((res) => setTimeout(res, 300));
+  localProducts.push(newProduct);
+
+  return newProduct;
+}
