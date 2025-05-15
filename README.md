@@ -39,6 +39,7 @@ pnpm run test
 
 ## Estrutura de Pastas
 
+```bash
 ├── src/
 │ ├── app/              # Páginas e layouts
 │ ├── components/       # Componentes reutilizáveis
@@ -46,3 +47,5 @@ pnpm run test
 │ ├── store/            # Zustand store
 │ ├── types/            # Tipagens globais
 │ ├── **__tests__**/    # Testes automatizados
+```
+
