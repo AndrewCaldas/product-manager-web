@@ -1,5 +1,6 @@
 import { create } from 'zustand';
-import { Product } from '@/types/product';
+import { Product } from '@/types';
+import { getProducts, createProduct } from '@/lib/api';
 
 type SortOption = 'name-asc' | 'name-desc' | 'price-asc' | 'price-desc';
 
@@ -9,12 +10,12 @@ interface ProductStore {
   search: string;
   priceRange: [number, number];
   sort: SortOption;
-  addProduct: (product: Product) => void;
   setSearch: (search: string) => void;
   setPriceRange: (range: [number, number]) => void;
   setSort: (sort: SortOption) => void;
   applyFilters: () => void;
-  loadProducts: (products: Product[]) => void;
+  loadProducts: () => Promise<void>;
+  addProduct: (product: Omit<Product, 'id'>) => Promise<void>;
 }
 
 export const useProductStore = create<ProductStore>((set, get) => ({
@@ -24,18 +25,34 @@ export const useProductStore = create<ProductStore>((set, get) => ({
   priceRange: [0, 99999],
   sort: 'name-asc',
 
-  addProduct: (product) => {
-    const updated = [...get().products, product];
-    set({ products: updated }, () => get().applyFilters());
+  loadProducts: async () => {
+    const data = await getProducts();
+    set({ products: data });
+    get().applyFilters();
   },
 
-  setSearch: (search) => set({ search }, () => get().applyFilters()),
+  addProduct: async (product) => {
+    const newProduct = await createProduct(product);
+    set((state) => ({
+      products: [...state.products, newProduct],
+    }));
+    get().applyFilters();
+  },
 
-  setPriceRange: (range) => set({ priceRange: range }, () => get().applyFilters()),
+  setSearch: (search) => {
+    set({ search });
+    get().applyFilters();
+  },
 
-  setSort: (sort) => set({ sort }, () => get().applyFilters()),
+  setPriceRange: (range) => {
+    set({ priceRange: range });
+    get().applyFilters();
+  },
 
-  loadProducts: (products) => set({ products }, () => get().applyFilters()),
+  setSort: (sort) => {
+    set({ sort });
+    get().applyFilters();
+  },
 
   applyFilters: () => {
     const { products, search, priceRange, sort } = get();
