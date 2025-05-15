@@ -22,7 +22,7 @@ export const useProductStore = create<ProductStore>((set, get) => ({
   products: [],
   filteredProducts: [],
   search: '',
-  priceRange: [0, 99999],
+  priceRange: [0, 5000],
   sort: 'name-asc',
 
   loadProducts: async () => {

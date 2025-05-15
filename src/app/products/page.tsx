@@ -2,7 +2,7 @@
 
 import { useEffect } from 'react';
 import { useProductStore } from '@/store/productStore';
-import { ProductCard, FilterBar } from './components';
+import { ProductCard, FilterBar, SortFilter } from './components';
 
 export default function ProductListPage() {
   const { filteredProducts, loadProducts } = useProductStore();
@@ -15,6 +15,7 @@ export default function ProductListPage() {
     <div className="p-6 space-y-6">
       <h1 className="text-2xl font-bold">Produtos</h1>
 
+      <SortFilter />
       <FilterBar />
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
